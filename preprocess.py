@@ -93,12 +93,12 @@ def preprocess_dataset(option, **kwargs):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-I', '--input-dir',
-                        default='./dataset/Train/HR',
+                        default='./data/train_set/HR/',
                         dest='input_dir',
                         type=str,
                         help="HR Data input directory")
     parser.add_argument('-LR', '--LR-dir',
-                        default='./dataset/Train/LR',
+                        default='./data/train_set/LR/',
                         dest='LR_dir',
                         type=str,
                         help="LR Data input directory")
