@@ -22,7 +22,7 @@ def preprocess_dataset(option, **kwargs):
     input_size = kwargs.pop('input_size', 33)
     label_size = kwargs.pop('label_size', 21)
     channels = kwargs.pop('channels', 1)
-    stride = kwargs.pop('stride', 14)
+    stride = kwargs.pop('stride', 33)
     chunks = kwargs.pop('chunks', 1024)
 
     pad = (input_size - label_size) // 2
@@ -115,4 +115,4 @@ if __name__ == '__main__':
                        label_size=21,
                        stride=14,
                        channels=1,
-                       chunks=1024)
+                       chunks=2048)
