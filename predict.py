@@ -51,31 +51,26 @@ if __name__ == '__main__':
                         default='./save/model_205.h5',
                         dest='model',
                         type=str,
-                        nargs=1,
                         help="The model to be used for prediction")
     parser.add_argument('-I', '--input-file',
                         default='./dataset/Test/Set5/baby_GT.bmp',
                         dest='input',
                         type=str,
-                        nargs=1,
                         help="Input image file path")
     parser.add_argument('-O', '--output-file',
                         default='./dataset/Test/Set5/baby_SRCNN.bmp',
                         dest='output',
                         type=str,
-                        nargs=1,
                         help="Output image file path")
     parser.add_argument('-B', '--baseline',
                         default='./dataset/Test/Set5/baby_bicubic.bmp',
                         dest='baseline',
                         type=str,
-                        nargs=1,
                         help="Baseline bicubic interpolated image file path")
     parser.add_argument('-S', '--scale-factor',
                         default=3.0,
                         dest='scale',
                         type=float,
-                        nargs=1,
                         help="Scale factor")
     option = parser.parse_args()
     predict()
