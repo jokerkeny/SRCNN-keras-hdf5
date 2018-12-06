@@ -5,7 +5,6 @@ import argparse
 import numpy as np
 import h5py
 from scipy import misc
-import cv2
 
 
 def remove_if_exist(file_name):
@@ -48,8 +47,7 @@ def preprocess_dataset(option, **kwargs):
             continue
         print(f)
 
-        Image = cv2.imread(f)
-        image = cv2.cvtColor(Image, cv2.COLOR_BGR2YCR_CB)
+        image = misc.imread(f, flatten=False, mode='YCbCr')
 
         w, h, c = image.shape
         w -= int(w % scale)
@@ -60,14 +58,12 @@ def preprocess_dataset(option, **kwargs):
             fl = join(LR_dir, fi)
             if not isfile(fl):
                 continue
-            Image = cv2.imread(fl)
-            scaled = cv2.cvtColor(Image, cv2.COLOR_BGR2YCR_CB)
+            scaled=misc.imread(fl,flatten=False, mode='YCbCr')
             scaled=scaled[:,:,0]
         else:
-            scaled = cv2.resize(image, (0, 0),fx=1.0 / scale, fy=1.0 / scale, interpolation=cv2.INTER_CUBIC)
-            # scaled = misc.imresize(image, 1.0 / scale, 'bicubic')
+            scaled = misc.imresize(image, 1.0 / scale, 'bicubic')
 
-        scaled = cv2.resize(scaled, (0, 0),fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC)
+        scaled = misc.imresize(scaled, scale / 1.0, 'bicubic')
 
         h5f = h5py.File(output_file, 'a')
         if count + chunks > h5f['input'].shape[0]:
