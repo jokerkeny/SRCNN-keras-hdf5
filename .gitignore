@@ -1,2 +1,3 @@
 .vscode
 data.h5
+*.pyc

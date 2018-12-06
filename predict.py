@@ -2,6 +2,8 @@ from os import listdir
 from os.path import isfile, join
 import argparse
 import h5py
+from keras.models import load_model
+import matplotlib.pyplot as plt
 
 import numpy as np
 from scipy import misc
@@ -20,8 +22,7 @@ def ycbcr2rgb(im):
 
 def predict():
     model = network.srcnn((None, None, 1))
-    f = h5py.File(option.model, mode='r')
-    model.load_weights_from_hdf5_group(f['model_weights'])
+    model.load_weights(option.model)
 
     X = misc.imread(option.input, mode='YCbCr')
 
@@ -29,26 +30,30 @@ def predict():
     w -= int(w % option.scale)
     h -= int(h % option.scale)
     X = X[0:w, 0:h, :]
-    X[:,:,1] = X[:,:,0]
-    X[:,:,2] = X[:,:,0]
+    X[:,:,1] = X[:,:,1]
+    X[:,:,2] = X[:,:,2]
 
     scaled = misc.imresize(X, 1.0/option.scale, 'bicubic')
     scaled = misc.imresize(scaled, option.scale/1.0, 'bicubic')
-    newimg = np.zeros(scaled.shape)
+    newshape=list(scaled.shape)
+    newshape[0]-=2*pad
+    newshape[1]-=2*pad
+    newimg = np.zeros(newshape)
 
     if option.baseline:
-        misc.imsave(option.baseline, scaled[pad : w - w % input_size, pad: h - h % input_size, :])
+        misc.imsave(option.baseline, ycbcr2rgb(scaled[pad:-pad,pad:-pad,:]))
 
-    newimg[pad:-pad, pad:-pad, 0, None] = model.predict(scaled[None, :, :, 0, None] / 255)
-    newimg[pad:-pad, pad:-pad, 1, None] = model.predict(scaled[None, :, :, 1, None] / 255)
-    newimg[pad:-pad, pad:-pad, 2, None] = model.predict(scaled[None, :, :, 2, None] / 255)
+    newimg[:, :, 0, None] = model.predict(scaled[None, :, :, 0, None] / 255)
+    newimg[:, :, 1, None] = model.predict(scaled[None, :, :, 1, None] / 255)
+    newimg[:, :, 2, None] = model.predict(scaled[None, :, :, 2, None] / 255)
+    newimg=ycbcr2rgb(newimg*255)
     misc.imsave(option.output, newimg)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-M', '--model',
-                        default='./save/model_205.h5',
+                        default='./save/model_50.h5',
                         dest='model',
                         type=str,
                         help="The model to be used for prediction")
