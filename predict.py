@@ -21,15 +21,15 @@ def ycbcr2rgb(im):
     return rgb.dot(xform.T)
 
 def predict_mul():
+    LR_dir=option.LR_dir
     if(option.pad):
+        SR_dir=option.SR_dir
         model = network.srcnn((None, None, 1),pad="same")
     else:
+        SR_dir=option.SR_dir+"_nopad"
         model = network.srcnn((None, None, 1),pad="valid")
     model.load_weights(option.model)
-
     
-    LR_dir=option.LR_dir
-    SR_dir=option.SR_dir+"_nopad"
     if not exists (SR_dir):
         makedirs(SR_dir)
     for fi in listdir(LR_dir):
