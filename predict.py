@@ -21,7 +21,10 @@ def ycbcr2rgb(im):
     return rgb.dot(xform.T)
 
 def predict_mul():
-    model = network.srcnn((None, None, 1))
+    if(option.pad):
+        model = network.srcnn((None, None, 1),pad="same")
+    else:
+        model = network.srcnn((None, None, 1),pad="valid")
     model.load_weights(option.model)
 
     
@@ -88,7 +91,7 @@ def predict():
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-M', '--model',
-                        default='./save/model_50.h5',
+                        default='./save/model_5.h5',
                         dest='model',
                         type=str,
                         help="The model to be used for prediction")
@@ -113,7 +116,7 @@ if __name__ == '__main__':
                         type=float,
                         help="Scale factor")
     parser.add_argument('-P', '--padding',
-                        default=False,
+                        default=True,
                         dest='pad',
                         type=bool,
                         help="does the model padding 0")

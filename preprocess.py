@@ -107,12 +107,29 @@ if __name__ == '__main__':
                         dest='output_file',
                         type=str,
                         help="Data output file with hdf5 format")
+    parser.add_argument('-P', '--padding',
+                        default=True,
+                        dest='pad',
+                        type=bool,
+                        help="does the model padding 0")
+
     option = parser.parse_args()
 
-    preprocess_dataset(option=option,
+    if (option.pad):
+        preprocess_dataset(option=option,
+                       scale=2,
+                       input_size=33,
+                       label_size=33,
+                       stride=33,
+                       channels=1,
+                       chunks=2048)
+    else:
+        preprocess_dataset(option=option,
                        scale=2,
                        input_size=33,
                        label_size=21,
-                       stride=14,
+                       stride=33,
                        channels=1,
                        chunks=2048)
+
+

@@ -15,7 +15,10 @@ import argparse
 
 def train():
 
-    model = network.srcnn()
+    if(args.pad):
+        model = network.srcnn(pad='same')
+    else:
+        model = network.srcnn()
 
     output_file = './data.h5'
     h5f = h5py.File(output_file, 'r')
@@ -51,6 +54,12 @@ if __name__ == '__main__':
                         dest='n_epoch',
                         type=int,
                         help="Training epochs must be a multiple of 5")
+    parser.add_argument('-P', '--padding',
+                        default=True,
+                        dest='pad',
+                        type=bool,
+                        help="does the model padding 0")
+
     args = parser.parse_args()
     print(args)
     train()
