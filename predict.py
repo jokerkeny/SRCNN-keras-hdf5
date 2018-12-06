@@ -9,9 +9,7 @@ import numpy as np
 from scipy import misc
 import network
 
-input_size = 33
-label_size = 21
-pad = (33 - 21) // 2
+edge = (33 - 21) // 2
 
 def ycbcr2rgb(im):
     xform = np.array([[1, 0, 1.402], [1, -0.34414, -.71414], [1, 1.772, 0]])
@@ -36,12 +34,12 @@ def predict():
     scaled = misc.imresize(X, 1.0/option.scale, 'bicubic')
     scaled = misc.imresize(scaled, option.scale/1.0, 'bicubic')
     newshape=list(scaled.shape)
-    newshape[0]-=2*pad
-    newshape[1]-=2*pad
+    newshape[0]-=2*edge
+    newshape[1]-=2*edge
     newimg = np.zeros(newshape)
 
     if option.baseline:
-        misc.imsave(option.baseline, ycbcr2rgb(scaled[pad:-pad,pad:-pad,:]))
+        misc.imsave(option.baseline, ycbcr2rgb(scaled[edge:-edge,edge:-edge,:]))
 
     newimg[:, :, 0, None] = model.predict(scaled[None, :, :, 0, None] / 255)
     newimg[:, :, 1, None] = model.predict(scaled[None, :, :, 1, None] / 255)
@@ -77,5 +75,12 @@ if __name__ == '__main__':
                         dest='scale',
                         type=float,
                         help="Scale factor")
+    parser.add_argument('-P', '--padding',
+                        default=False,
+                        dest='pad',
+                        type=bool,
+                        help="does the model padding 0")
     option = parser.parse_args()
+    if(option.pad):
+        edge=0
     predict()
