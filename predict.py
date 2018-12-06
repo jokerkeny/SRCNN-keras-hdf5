@@ -4,12 +4,14 @@ import argparse
 import h5py
 from keras.models import load_model
 import matplotlib.pyplot as plt
+import ast
 
 import numpy as np
 from scipy import misc
 
 import network
 from preprocess import remove_if_exist
+from addedge import add_edge
 
 edge = (33 - 21) // 2
 
@@ -32,6 +34,8 @@ def predict_mul():
     
     if not exists (SR_dir):
         makedirs(SR_dir)
+    if not exists (option.SR_dir):
+        makedirs(option.SR_dir)
     for fi in listdir(LR_dir):
         f = join(LR_dir, fi)
         if not isfile(f):
@@ -56,7 +60,17 @@ def predict_mul():
         newimg[:, :, 2, None] = model.predict(scaled[None, :, :, 2, None] / 255)
         newimg=ycbcr2rgb(newimg*255)
         misc.imsave(sr_file, newimg)
-        # misc.imsave(fi,ycbcr2rgb(scaled))
+
+
+        # save sr with add_edge
+        if not (option.pad):
+            sr_file = splitext(fi)[0]+srext
+            sr_file = join(option.SR_dir, sr_file)
+            remove_if_exist(sr_file)
+
+            scaled=ycbcr2rgb(scaled)
+            newimg=add_edge(newimg,scaled)
+            misc.imsave(sr_file, newimg)
 
 def predict():
     model = network.srcnn((None, None, 1))
@@ -91,10 +105,12 @@ def predict():
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-M', '--model',
-                        default='./save/model_5.h5',
+                        default='./save/model_10.h5',
                         dest='model',
                         type=str,
                         help="The model to be used for prediction")
+
+    # For single file
     parser.add_argument('-I', '--input-file',
                         default='./dataset/Test/Set5/baby_GT.bmp',
                         dest='input',
@@ -110,6 +126,8 @@ if __name__ == '__main__':
                         dest='baseline',
                         type=str,
                         help="Baseline bicubic interpolated image file path")
+    
+    
     parser.add_argument('-S', '--scale-factor',
                         default=2.0,
                         dest='scale',
@@ -118,8 +136,10 @@ if __name__ == '__main__':
     parser.add_argument('-P', '--padding',
                         default=True,
                         dest='pad',
-                        type=bool,
+                        type=ast.literal_eval,
                         help="does the model padding 0")
+
+    # For multi-file (dir)
     parser.add_argument('-LR', '--LR_dir',
                         default='./data/test_set/LR',
                         dest='LR_dir',
@@ -134,5 +154,6 @@ if __name__ == '__main__':
     option = parser.parse_args()
     if(option.pad):
         edge=0
+    # single file
     # predict()
     predict_mul()

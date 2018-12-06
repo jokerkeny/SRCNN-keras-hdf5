@@ -1,3 +1,4 @@
+import ast
 from os import listdir, makedirs
 from os.path import isfile, join, exists
 import os
@@ -110,7 +111,7 @@ if __name__ == '__main__':
     parser.add_argument('-P', '--padding',
                         default=True,
                         dest='pad',
-                        type=bool,
+                        type=ast.literal_eval,
                         help="does the model padding 0")
 
     option = parser.parse_args()
