@@ -59,6 +59,7 @@ def preprocess_dataset(option, **kwargs):
             if not isfile(fl):
                 continue
             scaled=misc.imread(fl,flatten=False, mode='YCbCr')
+            scaled=scaled[:,:,0]
         else:
             scaled = misc.imresize(image, 1.0 / scale, 'bicubic')
 
