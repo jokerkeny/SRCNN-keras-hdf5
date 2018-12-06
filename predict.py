@@ -73,7 +73,7 @@ if __name__ == '__main__':
                         type=str,
                         help="Baseline bicubic interpolated image file path")
     parser.add_argument('-S', '--scale-factor',
-                        default=3.0,
+                        default=2.0,
                         dest='scale',
                         type=float,
                         help="Scale factor")

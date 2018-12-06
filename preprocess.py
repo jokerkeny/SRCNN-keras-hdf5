@@ -15,9 +15,10 @@ def remove_if_exist(file_name):
 def preprocess_dataset(option, **kwargs):
 
     input_dir = option.input_dir
+    LR_dir=option.LR_dir
     output_file = option.output_file
 
-    scale = kwargs.pop('scale', 3)
+    scale = kwargs.pop('scale', 2)
     input_size = kwargs.pop('input_size', 33)
     label_size = kwargs.pop('label_size', 21)
     channels = kwargs.pop('channels', 1)
@@ -40,8 +41,8 @@ def preprocess_dataset(option, **kwargs):
         f.create_dataset("count", data=(0,))
 
     count = 0
-    for f in listdir(input_dir):
-        f = join(input_dir, f)
+    for fi in listdir(input_dir):
+        f = join(input_dir, fi)
         if not isfile(f):
             continue
         print(f)
@@ -53,7 +54,14 @@ def preprocess_dataset(option, **kwargs):
         h -= int(h % scale)
         image = image[0:w, 0:h, 0]
 
-        scaled = misc.imresize(image, 1.0 / scale, 'bicubic')
+        if(exists(LR_dir)):
+            fl = join(LR_dir, fi)
+            if not isfile(fl):
+                continue
+            scaled=misc.imread(fl,flatten=False, mode='YCbCr')
+        else:
+            scaled = misc.imresize(image, 1.0 / scale, 'bicubic')
+
         scaled = misc.imresize(scaled, scale / 1.0, 'bicubic')
 
         h5f = h5py.File(output_file, 'a')
@@ -84,10 +92,15 @@ def preprocess_dataset(option, **kwargs):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-I', '--input-dir',
-                        default='./dataset/Train',
+                        default='./dataset/Train/HR',
                         dest='input_dir',
                         type=str,
-                        help="Data input directory")
+                        help="HR Data input directory")
+    parser.add_argument('-LR', '--LR-dir',
+                        default='./dataset/Train/LR',
+                        dest='LR_dir',
+                        type=str,
+                        help="LR Data input directory")
     parser.add_argument('-O', '--output-file',
                         default='./data.h5',
                         dest='output_file',
@@ -96,7 +109,7 @@ if __name__ == '__main__':
     option = parser.parse_args()
 
     preprocess_dataset(option=option,
-                       scale=3,
+                       scale=2,
                        input_size=33,
                        label_size=21,
                        stride=14,
