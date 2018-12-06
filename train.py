@@ -40,19 +40,16 @@ if __name__ == '__main__':
                         default='./save',
                         dest='save',
                         type=str,
-                        nargs=1,
                         help="Path to save the checkpoints to")
     parser.add_argument('-D', '--data',
                         default='./dataset/Train/output/',
                         dest='data',
                         type=str,
-                        nargs=1,
                         help="Training data directory")
     parser.add_argument('-E', '--epoch',
                         default=50,
                         dest='n_epoch',
                         type=int,
-                        nargs=1,
                         help="Training epochs must be a multiple of 5")
     args = parser.parse_args()
     print(args)

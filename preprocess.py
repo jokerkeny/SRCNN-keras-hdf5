@@ -87,13 +87,11 @@ if __name__ == '__main__':
                         default='./dataset/Train',
                         dest='input_dir',
                         type=str,
-                        nargs=1,
                         help="Data input directory")
     parser.add_argument('-O', '--output-file',
                         default='./data.h5',
                         dest='output_file',
                         type=str,
-                        nargs=1,
                         help="Data output file with hdf5 format")
     option = parser.parse_args()
 
